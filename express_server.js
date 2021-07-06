@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.get("/", (req, res) => {
     res.send("Hello");
-});
+})
 
 app.get("/urls.json", (req, res) => {
     res.json(urlDatabase)
@@ -72,6 +72,14 @@ app.post("/urls", (req, res) => {
 
     res.redirect(`/urls/${shortURl}`);
 })
+
+app.post(`/urls/:shortURL/delete`, (req, res) => {
+    const shortURL = req.params.shortURL;
+    delete urlDatabase[shortURL];
+
+    res.redirect("/urls");
+
+});
 
 
 

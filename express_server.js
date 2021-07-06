@@ -16,7 +16,7 @@ function generateRandomString() {
         result += Alph.charAt(Math.floor(Math.random() * Alph.length));
     }
 
-    return result
+    return result;
 
 }
 
@@ -25,19 +25,19 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.get("/", (req, res) => {
     res.send("Hello");
-})
+});
 
 app.get("/urls.json", (req, res) => {
     res.json(urlDatabase)
-})
+});
 
 app.get("/hello", (req, res) => {
     res.send("<html><body>Hello <b>World</b></body></html>\n")
-})
+});
 
 app.get("/urls/new", (req, res) => {
     res.render("urls_new")
-})
+});
 
 app.get("/urls", (req, res) => {
     const templateVars = { urls: urlDatabase};
@@ -50,7 +50,7 @@ app.get("/urls/:shortURL", (req, res) => {
     const templateVars = {shortURL: shortURL2, longURL: urlDatabase[shortURL2]};
    
     res.render("urls_show", templateVars);
-})
+});
 
 app.get("/u/:shortURL", (req, res) => {
     
@@ -71,7 +71,7 @@ app.post("/urls", (req, res) => {
     
 
     res.redirect(`/urls/${shortURl}`);
-})
+});
 
 app.post(`/urls/:shortURL/delete`, (req, res) => {
     const shortURL = req.params.shortURL;
@@ -89,9 +89,9 @@ app.post("/urls/:shortURL/update/", (req, res) => {
   
     
     res.redirect(`/urls`); 
-})
+});
 
 
 app.listen(PORT, () => {
     console.log(`Example app listening on port: ${PORT}`);
-})
+});

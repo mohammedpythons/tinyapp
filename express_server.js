@@ -10,6 +10,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
+const users = {
+    "userone": {
+        id: "userone",
+        email: "userone@mail.com",
+        password: "123"
+    },
+    "usertwo": {
+        id: "usertwo",
+        email: "usertwo@mail.com",
+        password: "321"
+    }
+};
+
 function generateRandomString() {
     let result = ""
     const Alph = "abcdefghijklmnopqrstuvwxyz123456789";
@@ -37,26 +50,26 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-    const username = req.cookies["username"];
-    const templateVars = {username};
+    const user_id= req.cookies["user_id"];
+    const templateVars = { user: users[user_id] };
     res.render("urls_new", templateVars);
 });
 
 app.get("/urls", (req, res) => {
-    console.log(`------- ${req.cookies["username"]}`)
+  
 
-    
-    const username = req.cookies["username"];
-    const templateVars = { urls: urlDatabase, username};
+    const user_id= req.cookies["user_id"];
+    const user = users[user_id]
+    const templateVars = { urls: urlDatabase, user_id, user};
 
     res.render("urls_index", templateVars);
 })
 
 app.get("/urls/:shortURL", (req, res) => {
-    const username = req.cookies["username"];
+    const user_id= req.cookies["user_id"];;
     let shortURL2 = req.params.shortURL;
 
-    const templateVars = {shortURL: shortURL2, longURL: urlDatabase[shortURL2], username};
+    const templateVars = {shortURL: shortURL2, longURL: urlDatabase[shortURL2], user: users[user_id]};
    
     res.render("urls_show", templateVars);
 });
@@ -73,7 +86,7 @@ app.get("/u/:shortURL", (req, res) => {
   });
 
 app.get("/register", (req, res) => {
-    
+
     res.render("registration");
 })
 
@@ -112,11 +125,23 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-    res.clearCookie("username");
+    res.clearCookie("user_id");
     res.redirect("/urls");
 });
 
+app.post("/register", (req, res) => {
+    const id = generateRandomString()
+    const email = req.body.email;
+    const password = req.body.password;
+    users[id] = {
+        id,
+        email,
+        password
+    }
+    res.cookie("user_id", id);
+    res.redirect("/urls");
 
+})
 
 
 app.listen(PORT, () => {

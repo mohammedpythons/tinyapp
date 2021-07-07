@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const e = require("express");
 const app = express();
 const PORT = 8080;
 app.set("view engine", "ejs");
@@ -14,14 +15,33 @@ const users = {
     "userone": {
         id: "userone",
         email: "userone@mail.com",
-        password: "123"
+        password: 123
     },
     "usertwo": {
         id: "usertwo",
         email: "usertwo@mail.com",
-        password: "321"
+        password: 321
     }
 };
+
+
+// helper functions
+
+const checkingObjectEmails = (email, obj) => {
+
+    for (let user in obj) {
+        
+        
+        if (obj[user].email === email) {
+             
+            return true
+        } 
+
+    }
+   
+
+    
+}
 
 function generateRandomString() {
     let result = ""
@@ -133,16 +153,22 @@ app.post("/register", (req, res) => {
     const id = generateRandomString()
     const email = req.body.email;
     const password = req.body.password;
+    if (!email || !password) {
+        res.status(400).send("you should not leave any input empty");
+    }
+    if (checkingObjectEmails(email, users)) {
+        res.status(400).send("email does exist");
+    };
     users[id] = {
         id,
         email,
         password
     }
+
+    
     res.cookie("user_id", id);
     res.redirect("/urls");
-
-})
-
+});
 
 app.listen(PORT, () => {
     console.log(`Example app listening on port: ${PORT}`);

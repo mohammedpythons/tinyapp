@@ -72,6 +72,10 @@ app.get("/u/:shortURL", (req, res) => {
     res.redirect(longURL);
   });
 
+app.get("/register", (req, res) => {
+    
+    res.render("registration");
+})
 
 app.post("/urls", (req, res) => {
     let shortURl = generateRandomString();
@@ -105,12 +109,15 @@ app.post("/login", (req, res) => {
     res.cookie("username", username);
     res.redirect("/urls");
 
-})
+});
 
 app.post("/logout", (req, res) => {
     res.clearCookie("username");
     res.redirect("/urls");
-})
+});
+
+
+
 
 app.listen(PORT, () => {
     console.log(`Example app listening on port: ${PORT}`);

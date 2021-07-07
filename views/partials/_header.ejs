@@ -15,9 +15,14 @@
           <label ><button type="submit">login</button></label>
         </form>
         <%} else {%>
-          <a class="nav-item">Welcome <%= username %></a>
-
+          <a class="nav-item">Logged in As:  <%= username %></a>
+          <form method="POST" action="/logout">
+            <label ><button type="submit">logout</button></label>
+          </form>
           <%}%>
+
+         
+
       </div>
     </nav>
   </header>

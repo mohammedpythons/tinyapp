@@ -15,17 +15,19 @@ const users = {
     "userone": {
         id: "userone",
         email: "userone@mail.com",
-        password: 123
+        password: "123"
     },
     "usertwo": {
         id: "usertwo",
         email: "usertwo@mail.com",
-        password: 321
+        password: "321"
     }
 };
 
 
 // helper functions
+
+
 
 const checkingObjectEmails = (email, obj) => {
 
@@ -108,6 +110,11 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/register", (req, res) => {
 
     res.render("registration");
+});
+
+app.get('/login', (req, res) => {
+    res.render("loginF");
+    
 })
 
 app.post("/urls", (req, res) => {
@@ -138,9 +145,30 @@ app.post("/urls/:shortURL/update/", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-    const username = req.body.username;
-    res.cookie("username", username);
-    res.redirect("/urls");
+   const email = req.body.email;
+   const password = req.body.password;
+   
+
+   if (!email || !password) {
+    return res.status(400).send("you should not leave any input empty");
+};
+   
+       for (let user in users) {
+           if (users[user].email === email && users[user].password === password)  {
+               res.cookie("user_id", users[user].id);
+        
+               return res.redirect("/urls");
+    
+            } 
+            
+        }
+        res.status(403).send("email or password is wrong");
+        
+
+          
+           
+
+
 
 });
 
@@ -154,10 +182,10 @@ app.post("/register", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     if (!email || !password) {
-        res.status(400).send("you should not leave any input empty");
+       return res.status(400).send("you should not leave any input empty");
     }
     if (checkingObjectEmails(email, users)) {
-        res.status(400).send("email does exist");
+       return res.status(400).send("email does exist");
     };
     users[id] = {
         id,

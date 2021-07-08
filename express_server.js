@@ -1,14 +1,13 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const e = require("express");
 const app = express();
 const PORT = 8080;
 app.set("view engine", "ejs");
 
 const urlDatabase = {
-    "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+    "b2xVn2": {longURL: "http://www.lighthouselabs.ca", user_id: "userone"} ,
+  "9sm5xK": {longURL: "http://www.google.com", user_id: "usertwo"}
 };
 
 const users = {
@@ -91,7 +90,7 @@ app.get("/urls/:shortURL", (req, res) => {
     const user_id= req.cookies["user_id"];;
     let shortURL2 = req.params.shortURL;
 
-    const templateVars = {shortURL: shortURL2, longURL: urlDatabase[shortURL2], user: users[user_id]};
+    const templateVars = {shortURL: shortURL2, longURL: urlDatabase[shortURL2].longURL, user: users[user_id]};
    
     res.render("urls_show", templateVars);
 });
@@ -100,7 +99,7 @@ app.get("/u/:shortURL", (req, res) => {
     
     
     const shortURL = req.params.shortURL;
-    const longURL = urlDatabase[shortURL];
+    const longURL = urlDatabase[shortURL].longURL;
     
 
 
@@ -109,21 +108,27 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.get("/register", (req, res) => {
 
-    res.render("registration");
+    res.render("registration", {user: null});
 });
 
 app.get('/login', (req, res) => {
-    res.render("loginF");
+
+    res.render("loginF", {user: null});
     
 })
 
 app.post("/urls", (req, res) => {
-    let shortURl = generateRandomString();
-    let longURL = req.body.longURL;
-    urlDatabase[shortURl] = longURL;
+    const shortURL = generateRandomString();
+    const user_id = req.cookies["user_id"];
+    const longURL = req.body.longURL;
+
+    urlDatabase[shortURL] = {
+        longURL,
+        user_id
+    }
     
 
-    res.redirect(`/urls/${shortURl}`);
+    res.redirect(`/urls/${shortURL}`);
 });
 
 app.post(`/urls/:shortURL/delete`, (req, res) => {
@@ -138,7 +143,7 @@ app.post(`/urls/:shortURL/delete`, (req, res) => {
 app.post("/urls/:shortURL/update/", (req, res) => {
     const shortURL = req.params.shortURL;
     const longURL = req.body.longURL;
-    urlDatabase[shortURL] = longURL;
+    urlDatabase[shortURL].longURL = longURL;
   
     
     res.redirect(`/urls`); 
@@ -164,12 +169,6 @@ app.post("/login", (req, res) => {
         }
         res.status(403).send("email or password is wrong");
         
-
-          
-           
-
-
-
 });
 
 app.post("/logout", (req, res) => {

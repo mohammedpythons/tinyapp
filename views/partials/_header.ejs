@@ -8,11 +8,11 @@
         <div class="navbar-nav">
 
           <a class="nav-item nav-link" href="/urls">My URLs</a>
-          <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
          
         </div>
         <% if (!user) { %>
-        
+         
+          <a class="nav-item nav-link" href="/login">Create New URL</a>
           <a class="nav-item nav-link" href="/register" >Register</a>
 
           <a class="nav-item nav-link"  href="/login">Login</a>
@@ -21,6 +21,8 @@
          
           
         <%} else {%>
+          <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+        
           <a class="nav-item">Logged in As:  <%= user.email %></a>
           <form method="POST" action="/logout">
             <label ><button class="btn btn-primary" type="submit" name="logout">logout</button></label>

@@ -77,13 +77,32 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  
 
     const user_id= req.cookies["user_id"];
-    const user = users[user_id]
-    const templateVars = { urls: urlDatabase, user_id, user};
+    const obj = {}
 
-    res.render("urls_index", templateVars);
+    for (let key in urlDatabase) {
+        if (urlDatabase[key][`user_id`] === user_id) {
+            const shortURL = key;
+            const longURL = urlDatabase[key].longURL;
+            obj[shortURL] = longURL;
+            
+        }
+
+
+    }
+
+    const user = users[user_id];
+    const templateVars = { urls: obj, user_id, user};
+
+   
+    if (user) {
+        res.render("urls_index", templateVars);
+
+    } else {
+        res.render("homepage", templateVars);
+    }
+
 })
 
 app.get("/urls/:shortURL", (req, res) => {

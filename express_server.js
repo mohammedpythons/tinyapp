@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require('bcrypt');
 const app = express();
 const PORT = 8080;
 app.set("view engine", "ejs");
@@ -14,12 +15,12 @@ const users = {
     "userone": {
         id: "userone",
         email: "userone@mail.com",
-        password: "123"
+        password: "$2b$10$NfasM028mpWmVux0epm.qOqODOU9cMuI6IVP17Fxx9g/tBhKle5zm"
     },
     "usertwo": {
         id: "usertwo",
         email: "usertwo@mail.com",
-        password: "321"
+        password: "$2b$10$6AxLI6B5kB4Uic1MHKMI6uXmDM0C8JkDr7UurtKu8Njc5d5Yy2N5e"
     }
 };
 
@@ -168,37 +169,11 @@ app.post("/urls/:shortURL/update/", (req, res) => {
     res.redirect(`/urls`); 
 });
 
-app.post("/login", (req, res) => {
-   const email = req.body.email;
-   const password = req.body.password;
-   
-
-   if (!email || !password) {
-    return res.status(400).send("you should not leave any input empty");
-};
-   
-       for (let user in users) {
-           if (users[user].email === email && users[user].password === password)  {
-               res.cookie("user_id", users[user].id);
-        
-               return res.redirect("/urls");
-    
-            } 
-            
-        }
-        res.status(403).send("email or password is wrong");
-        
-});
-
-app.post("/logout", (req, res) => {
-    res.clearCookie("user_id");
-    res.redirect("/urls");
-});
-
 app.post("/register", (req, res) => {
     const id = generateRandomString()
     const email = req.body.email;
-    const password = req.body.password;
+    const password = bcrypt.hashSync(req.body.password, 10);
+    
     if (!email || !password) {
        return res.status(400).send("you should not leave any input empty");
     }
@@ -210,11 +185,45 @@ app.post("/register", (req, res) => {
         email,
         password
     }
+console.log("123", bcrypt.hashSync("123", 10))
+console.log("321", bcrypt.hashSync("321", 10))
 
     
     res.cookie("user_id", id);
     res.redirect("/urls");
 });
+
+
+app.post("/login", (req, res) => {
+   const email = req.body.email;
+   const password = req.body.password;
+   
+
+   if (!email || !password) {
+    return res.status(400).send("you should not leave any input empty");
+};
+   
+       for (let user in users) {
+           if (users[user].email === email && bcrypt.compareSync(password ,users[user].password))  {
+               console.log(users[user].password)
+               res.cookie("user_id", users[user].id);
+        
+               return res.redirect("/urls");
+    
+            } 
+            
+        }
+        res.status(403).send("email or password is wrong");
+        
+        
+        
+});
+
+app.post("/logout", (req, res) => {
+    res.clearCookie("user_id");
+    res.redirect("/urls");
+});
+
 
 app.listen(PORT, () => {
     console.log(`Example app listening on port: ${PORT}`);

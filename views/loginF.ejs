@@ -8,14 +8,14 @@
 <body>
     <%- include('partials/_header') %>
 
-    <div  style="display: flex;justify-content: center;flex-wrap: wrap;align-items: center; padding: 5px">
+    <div  style="display: flex; padding: 5px">
 
-    <form method="POST" action="/login">
-        <label for="email">Email adress</label>
-        <input type="email" name="email">
-        <label for="password">Password</label>
-        <input type="password" name="password">
-        <button class="btn btn-primary" type="submit" >Login</button>
+    <form  method="POST" action="/login">
+        <label class="row ml-0"  for="email">Email adress</label>
+        <input class="row ml-0" type="email" name="email">
+        <label class="row ml-0" for="password">Password</label>
+        <input class="row ml-0" type="password" name="password">
+        <button class="row ml-0 btn btn-primary mt-2" type="submit" >Login</button>
     
     </form>
 

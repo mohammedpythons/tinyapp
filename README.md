@@ -6,7 +6,8 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 login page
 
-<img width="1372" alt="Screen Shot 2021-07-08 at 8 05 04 PM" src="https://user-images.githubusercontent.com/69409540/125005607-2d687200-e02a-11eb-9209-c67c7f2779a4.png">
+![Screen Shot 2021-07-08 at 8 44 05 PM](https://user-images.githubusercontent.com/69409540/125007346-001dc300-e02e-11eb-95b1-3cfd3df7d5c1.png)
+
 
 
 main page

@@ -114,6 +114,13 @@ app.get('/login', (req, res) => {
     
 })
 
+
+
+
+
+
+
+
 app.post("/urls", (req, res) => {
     const shortURL = generateRandomString();
     const user_id = req.session.user_id;
@@ -151,7 +158,8 @@ app.post("/register", (req, res) => {
     const email = req.body.email;
     const password = bcrypt.hashSync(req.body.password, 10);
     
-    if (!email || !password) {
+    // I used req.body.password in the if statement because the hashing was creating a password even if i just insert the email and left the password empty
+    if (!email || !req.body.password) {
        return res.status(400).send("you should not leave any input empty");
     }
     if (checkingObjectEmails(email, users)) {

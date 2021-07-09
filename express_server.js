@@ -1,12 +1,16 @@
+//requirements for this project
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cookieSession = require('cookie-session')
 const bcrypt = require('bcrypt');
 const { generateRandomString, checkingObjectEmails } = require('./helperFunc');
+const { use } = require("chai");
 const app = express();
 const PORT = 8080;
 app.set("view engine", "ejs");
+
+//Databases for the project
 
 const urlDatabase = {
     "b2xVn2": {longURL: "http://www.lighthouselabs.ca", user_id: "userone"} ,
@@ -27,7 +31,7 @@ const users = {
 };
 
 
-
+// the middlewares that used in this project
 app.use(cookieSession({
     name: "sessions",
     keys: ["secret1", "secret2"]
@@ -36,6 +40,8 @@ app.use(cookieSession({
 app.use(cookieParser("cookieParser"));
 app.use(bodyParser.urlencoded({extended: true}));
 
+
+//all the get requests start from here!
 app.get("/", (req, res) => {
     res.send("Hello");
 });
@@ -54,6 +60,7 @@ app.get("/urls/new", (req, res) => {
     res.render("urls_new", templateVars);
 });
 
+// main page, if the user logged in render a specific page if not render another specific page
 app.get("/urls", (req, res) => {
 
     const user_id= req.session.user_id;
@@ -64,11 +71,8 @@ app.get("/urls", (req, res) => {
             const shortURL = key;
             const longURL = urlDatabase[key].longURL;
             obj[shortURL] = longURL;
-            
+            }
         }
-
-
-    }
 
     const user = users[user_id];
     const templateVars = { urls: obj, user_id, user};
@@ -82,16 +86,20 @@ app.get("/urls", (req, res) => {
     }
 
 })
-
+//get the request and check if the user exists or not to access the urls/:shortURL
 app.get("/urls/:shortURL", (req, res) => {
     const user_id= req.session.user_id;;
     let shortURL2 = req.params.shortURL;
+    if (user_id) {
+        const templateVars = {shortURL: shortURL2, longURL: urlDatabase[shortURL2].longURL, user: users[user_id]};
+       
+        res.render("urls_show", templateVars);
+    } else {
+        res.redirect("/urls")
+    }
 
-    const templateVars = {shortURL: shortURL2, longURL: urlDatabase[shortURL2].longURL, user: users[user_id]};
-   
-    res.render("urls_show", templateVars);
 });
-
+// redirect the user to the original url
 app.get("/u/:shortURL", (req, res) => {
     
     
@@ -102,12 +110,12 @@ app.get("/u/:shortURL", (req, res) => {
 
     res.redirect(longURL);
   });
-
+// register form
 app.get("/register", (req, res) => {
 
     res.render("registration", {user: null});
 });
-
+// login form
 app.get('/login', (req, res) => {
 
     res.render("loginF", {user: null});
@@ -118,7 +126,7 @@ app.get('/login', (req, res) => {
 
 
 
-
+// all the post requests start from here!
 
 
 app.post("/urls", (req, res) => {
@@ -152,13 +160,14 @@ app.post("/urls/:shortURL/update/", (req, res) => {
     
     res.redirect(`/urls`); 
 });
-
+//creating new user for registration
 app.post("/register", (req, res) => {
     const id = generateRandomString()
     const email = req.body.email;
     const password = bcrypt.hashSync(req.body.password, 10);
-    
-    // I used req.body.password in the if statement because the hashing was creating a password even if i just insert the email and left the password empty
+
+// I used req.body.password in the if statement because the hashing was creating a password even if i just insert the email and left the password empty
+
     if (!email || !req.body.password) {
        return res.status(400).send("you should not leave any input empty");
     }
@@ -177,7 +186,7 @@ app.post("/register", (req, res) => {
     res.redirect("/urls");
 });
 
-
+// chekin if the email exists in the Database or not to login
 app.post("/login", (req, res) => {
    const email = req.body.email;
    const password = req.body.password;
